@@ -1,6 +1,9 @@
 package simpleController18.api.core;
 
+import simpleController18.api.controller.ViewControllerDispatcherAware;
 import simpleController18.api.view.ViewContainerFrame;
+import simpleController18.api.view.ViewManager;
+import simpleController18.api.view.ViewManagerException;
 import simpleController18.core.view.DefaultViewContainerFrame;
 
 /**
@@ -20,7 +23,7 @@ import simpleController18.core.view.DefaultViewContainerFrame;
  *
  */
 //https://github.com/mariogarcia/viewa/blob/c39f7f46dc39908bd23cd4ded0b60c5f555617b8/api/src/main/java/org/viewaframework/core/Application.java
-public interface Application {
+public interface Application extends ViewControllerDispatcherAware,ApplicationContextAware {
 
 /**
  * 
@@ -69,4 +72,21 @@ public void initUI();
  * @since 1.0.4
  */
 public void setVisible(boolean visible);
+
+/**
+ * Sets the ViewManager
+ * 
+ * @param manager. If a ViewManager has been already set then an
+ * exception should be thrown.
+ * @see {@link ViewManager}
+ */
+public void setViewManager(ViewManager manager) throws ViewManagerException;
+
+/**
+ * Returns the object responsible for arranging and ordering the views. 
+ * 
+ * @return The view manager.
+ * @see {@link ViewManager}
+ */
+public ViewManager getViewManager();
 }

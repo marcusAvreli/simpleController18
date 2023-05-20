@@ -6,12 +6,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
-
+import simpleController18.core.annotation.Controllers;
+import simpleController18.core.annotation.Controller;
 import simpleController18.core.view.DefaultViewContainer;
 import simpleController18.swing.swing.builder.SwingBuilder;
 import simpleController18.swing.swing.builder.layout.GridBagConstraintsBuilder;
 
 //https://github.com/mariogarcia/viewa/blob/c39f7f46dc39908bd23cd4ded0b60c5f555617b8/widget/src/test/java/org/viewaframework/widget/swing/builder/util/SwingBuilderView.java
+@Controllers({
+	@Controller(type=TestController.class,pattern="start2Button"),
+	
+})
 public class SwingBuilderView extends DefaultViewContainer{
 	public SwingBuilderView(){
 		super("SwingBuilderViewId",

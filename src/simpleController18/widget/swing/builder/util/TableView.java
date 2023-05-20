@@ -7,10 +7,19 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
+import simpleController18.core.annotation.Listener;
+import simpleController18.core.annotation.Listeners;
 import simpleController18.core.view.DefaultViewContainer;
 import simpleController18.swing.swing.builder.SwingBuilder;
 import simpleController18.swing.swing.builder.layout.GridBagConstraintsBuilder;
 
+/*
+@Listeners({
+	@Listener(
+		type=TableListener.class,id="start2Button"
+	)
+})
+*/
 public class TableView extends DefaultViewContainer{
 	public TableView(){
 		super("TableViewId",

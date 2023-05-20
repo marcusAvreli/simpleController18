@@ -10,14 +10,18 @@ import javax.swing.JFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simpleController18.api.controller.ViewControllerDispatcher;
 import simpleController18.api.core.Application;
+import simpleController18.api.core.ApplicationContext;
+import simpleController18.api.core.ApplicationContextException;
 import simpleController18.api.view.ViewContainer;
 import simpleController18.api.view.ViewContainerFrame;
 import simpleController18.api.view.ViewException;
 import simpleController18.api.view.ViewManager;
+import simpleController18.api.view.ViewManagerException;
 import simpleController18.api.view.perspective.PerspectiveConstraint;
 import simpleController18.core.annotation.processor.ViewsProcessorWrapper;
-import simpleController18.core.view.DefaultViewContainerFrame;
+import simpleController18.core.controller.DefaultViewControllerDispatcher;
 import simpleController18.core.view.DefaultViewManager;
 import simpleController18.core.view.perspective.DefaultPerspective;
 import simpleController18.widget.swing.builder.util.SwingBuilderView;
@@ -49,9 +53,10 @@ import simpleController18.widget.swing.builder.util.TableView;
 public abstract class AbstractApplication implements Application
 {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractApplication.class);
+	private ApplicationContext			applicationContext;
 	
 	private Locale						locale;
-	
+	private ViewControllerDispatcher 	dispatcher;
 	private String 						name;
 	private ViewContainerFrame			rootView;
 	private ViewManager 				viewManager;
@@ -59,7 +64,9 @@ public abstract class AbstractApplication implements Application
 	public AbstractApplication(){
 		logger.info("constructor_0");
 		this.viewManager 			= new DefaultViewManager(this,new DefaultPerspective());
+		this.dispatcher 			= new DefaultViewControllerDispatcher();
 		ViewContainer vc = new SwingBuilderView(); 
+		
 		ViewContainer tableContainer = new TableView();
 		//public ViewsProcessorWrapper(ViewContainer view,PerspectiveConstraint constraint,boolean rootView,boolean trayView){
 		ViewsProcessorWrapper wrapper = new ViewsProcessorWrapper(vc, PerspectiveConstraint.LEFT, false, false);
@@ -111,7 +118,9 @@ public abstract class AbstractApplication implements Application
 	@SuppressWarnings("unchecked")
 	public void prepare(){
 		logger.info("Application preparing!");
-		
+		if (this.applicationContext == null){
+			this.applicationContext = new DefaultApplicationContext();
+		}
 		
 	}
 	public ViewContainerFrame getRootView() {
@@ -210,4 +219,31 @@ public abstract class AbstractApplication implements Application
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.viewa.core.Application#setViewManager(org.viewa.view.ViewManager)
+	 */
+	public void setViewManager(ViewManager viewManager) throws ViewManagerException {
+		this.viewManager = viewManager;
+	}
+	/* (non-Javadoc)
+	 * @see org.viewa.core.ApplicationBase#getControllerDispatcher()
+	 */
+	public ViewControllerDispatcher getControllerDispatcher() {
+		return this.dispatcher;
+	}
+	public void setControllerDispatcher(ViewControllerDispatcher dispatcher)  {
+		this.dispatcher = dispatcher;
+	}
+	public ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
+
+	public void setApplicationContext(ApplicationContext applicationContext)  throws ApplicationContextException {
+		if (this.applicationContext != null) {
+			throw new ApplicationContextException();
+		}
+		this.applicationContext = applicationContext;
+	}
+
 }

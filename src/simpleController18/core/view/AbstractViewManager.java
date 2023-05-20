@@ -3,16 +3,21 @@ package simpleController18.core.view;
 import java.awt.Container;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import simpleController18.api.controller.ViewController;
+import simpleController18.api.controller.ViewControllerDispatcher;
 import simpleController18.api.core.Application;
 import simpleController18.api.view.ViewContainer;
 import simpleController18.api.view.ViewException;
 import simpleController18.api.view.ViewManager;
 import simpleController18.api.view.perspective.PerspectiveConstraint;
+import simpleController18.core.annotation.processor.ControllersProcessor;
+import simpleController18.core.annotation.processor.ListenersProcessor;
 
 
 
@@ -52,16 +57,63 @@ public abstract class AbstractViewManager implements ViewManager
 		ViewContainer 							viewContainer 			= viewContainerCollection.get(view.getId());		
 		Application								app						= this.getApplication();
 		
-	
+		String									viewId					= view.getId();
+		ViewControllerDispatcher				controllerDispatcher	= app.getControllerDispatcher();
+		Map<String,List<ViewController<?,?>>>	controllers 			= null;
 	 /* Then application instance is injected in the view */
 		view.setApplication(app);
 		debugJustInCase("add_view:"+view.getId());
+		
+		if (viewId!=null && viewContainer == null)
+		{
+			//model 		= modelManager.getViewModelMap(viewId);
+			//viewModel	= view.getViewModelMap();
+			controllers = controllerDispatcher.getViewControllers(view);
+			 /* Then application instance is injected in the view */
+			view.setApplication(app);
+		 /* The view is added to the application holder */
+			this.getViews().put(viewId,view);
+			if(null != controllers && !controllers.isEmpty()) {
+				debugJustInCase("controllers_size:"+controllers.size());
+			}else {
+				debugJustInCase("controllers_is_empty");
+			}
+			 /* This view can already have some controllers, if so the manager adds the dispatcher controllers*/
+			if (view.getViewControllerMap()!=null){
+				view.getViewControllerMap().putAll(controllers);
+		 /* Otherwise the dispatcher sets the controllers */
+			} else {
+				view.setViewControllerMap(controllers);
+			}
+			debugJustInCase("before_processing_controllers");
+			try {
+				view.getViewControllerMap().putAll(
+						new ControllersProcessor(
+								view,
+								view.getApplication().getApplicationContext()).process());
+				view.setViewContainerListeners(
+						new ListenersProcessor(view).getResult()
+					);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			debugJustInCase("after_processing_controllers");
+			
+		}
+		
 		
 		if (!view.getId().equals(ViewManager.ROOT_VIEW_ID)){
 			this.getPerspective().addView(view,constraint);
 		}
 		else {
 			//this.getPerspective().addView(view,constraint);
+		}
+		try {
+			view.viewInit();
+		} catch (ViewException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		debugJustInCase("add_view_finished");
 		

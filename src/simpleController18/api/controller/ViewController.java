@@ -4,6 +4,7 @@ import java.util.EventListener;
 import java.util.EventObject;
 
 import simpleController18.api.view.ViewContainer;
+import simpleController18.api.view.ViewException;
 import simpleController18.api.view.ViewManager;
 
 public interface ViewController<EL extends EventListener,EO extends EventObject> extends ListenerProxy<EL,EO> {

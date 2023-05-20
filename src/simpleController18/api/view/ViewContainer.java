@@ -6,12 +6,14 @@ import java.util.List;
 import javax.swing.JToolBar;
 import javax.swing.RootPaneContainer;
 
+import simpleController18.api.controller.ViewControllerAware;
 import simpleController18.api.core.ApplicationAware;
+import simpleController18.api.view.event.ViewContainerEventControllerAware;
 
 
 
 //https://github.com/mariogarcia/viewa/blob/c39f7f46dc39908bd23cd4ded0b60c5f555617b8/api/src/main/java/org/viewaframework/view/ViewContainer.java
-public interface ViewContainer  extends  RootPaneContainer,ApplicationAware
+public interface ViewContainer  extends  RootPaneContainer,ApplicationAware,ViewControllerAware,ComponentsAware,ViewContainerEventControllerAware
 {
 	public static final String CONTENTPANE 	= "contentPane";
 	public static final String FRAME		= "frame";
@@ -70,6 +72,6 @@ public interface ViewContainer  extends  RootPaneContainer,ApplicationAware
 	 */
 	public abstract void setTitle(String title);
 
-	
+	public abstract void viewInit() throws ViewException;
 
 }
